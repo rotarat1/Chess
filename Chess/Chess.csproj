@@ -57,6 +57,7 @@
       <DependentUpon>Chessboard.cs</DependentUpon>
     </Compile>
     <Compile Include="EmptyPiece.cs" />
+    <Compile Include="Gameplay.cs" />
     <Compile Include="Tile.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -121,19 +121,17 @@ namespace Chess
 			this.Text = "Chess";
 			this.ResumeLayout(false);
 		}
-
-        Tuple<int, int> prevIndex = Tuple.Create(0, 0);
         bool isClicked = false;
-        bool isEmpty = true;
+        Gameplay gameplay = new Gameplay();
+        Tuple<int, int> prevIndex = Tuple.Create(0, 0);
         bool kingClicked = false;
-        bool kingAttacked = false;
-        List<Tile> piecesMovesKingAttacked = new List<Tile>();
         bool noKingPossibleMoves = false;   
 
         private void pic_Clicked(object sender, EventArgs e)
         {
             Tile currTile = (Tile)sender;
 
+            // Handles the visualisation of the possible moves of the clicked chesspiece 
             if (!isClicked)
             {
                 if (currTile.ChessPiece.Color != turnColor && currTile.ChessPiece.Color != Colour.Colorless)
@@ -145,301 +143,20 @@ namespace Chess
                 } else
                 {
                     isClicked = true;
-                    kingClicked = true;
+
+                    if (currTile.ChessPiece.Type == "King")
+                    {
+                        kingClicked = true;
+                    }
+
                     Tuple<int, int> currIndex = Tuple.Create(currTile.Index.Item1, currTile.Index.Item2);
                     prevIndex = currIndex;
                     currTile.ChessPiece.FillPossibleMoves();
                     var possibleMoves = currTile.ChessPiece.GetPossibleMoves();
-            
-                    foreach (Tuple<Direction, MovementType> possibleMove in possibleMoves)
-                    {
-                        Tuple<int, int> mod = Tuple.Create(0, 0);
-                        int m = 0;
-
-                        if (currTile.ChessPiece.Type != "Knight")
-                        {
-                            if (turnColor == Colour.Black)
-                            {
-                                m = 1;
-                            }
-                            else if(turnColor  == Colour.White)
-                            {
-                                m = -1;
-                            }
-
-                            switch (possibleMove.Item1)
-                            {
-                                case Direction.Forward:
-                                    mod = Tuple.Create(m, 0);
-                                    break;
-                                case Direction.Backward:
-                                    mod = Tuple.Create(-m, 0);
-                                    break;
-                                case Direction.Left:
-                                    mod = Tuple.Create(0, m);
-                                    break;
-                                case Direction.Right:
-                                    mod = Tuple.Create(0, -m);
-                                    break;
-                                case Direction.ForwardLeft:
-                                    mod = Tuple.Create(m, m);
-                                    break;
-                                case Direction.ForwardRight:
-                                    mod = Tuple.Create(m, -m);
-                                    break;
-                                case Direction.BackwardLeft:
-                                    mod = Tuple.Create(-m, m);
-                                    break;
-                                case Direction.BackwardRight:
-                                    mod = Tuple.Create(-m, -m);
-                                    break;
-                                default:
-                                    break;
-                            }
-                            if (currIndex.Item1 + mod.Item1 > 7 || currIndex.Item1 + mod.Item1 < 0|| currIndex.Item2 + mod.Item2 > 7 || currIndex.Item2 + mod.Item2 < 0)
-                            {
-                                continue;
-                            }
-                            int guard = 0;
-                            switch (possibleMove.Item2)
-                            {
-                                case MovementType.PawnTake:
-                                    
-                                    if (board[currIndex.Item1 + mod.Item1, currIndex.Item2 + mod.Item2].ChessPiece.Type == "Empty Piece")
-                                    {
-                                        break;
-                                    }
-                                    guard = 1;
-                                    break;
-                                case MovementType.Single:
-                                    guard = 1;
-                                    break;
-                                case MovementType.Double:
-                                    guard = 2;
-                                    break;
-                                case MovementType.Multiple:
-                                    guard = 7;
-                                    break;
-                                case MovementType.Castling:
-                                    if (board[currIndex.Item1, currIndex.Item2 - 4].ChessPiece.Type == "Rook" && board[currIndex.Item1, currIndex.Item2 - 4].ChessPiece.hasMoved == false 
-                                        || board[currIndex.Item1, currIndex.Item2 + 3].ChessPiece.Type == "Rook" && board[currIndex.Item1, currIndex.Item2 + 3].ChessPiece.hasMoved == false)
-                                    {
-                                        for (int i = 1; i < 4; i++)
-                                        {
-                                            if (board[currIndex.Item1, i].ChessPiece.Type != "Empty Piece")
-                                            {
-                                                isEmpty = false;
-                                                break;
-                                            }
-                                        }
-                                        if (isEmpty)
-                                        {
-                                            board[currIndex.Item1, 2].Image = board[currIndex.Item1, 2].ChessPiece.SpecialImageAfterClick;
-                                        }
-                                        isEmpty = true;
-                                        for (int i = 5; i < 7; i++)
-                                        {
-                                            if (board[currIndex.Item1, i].ChessPiece.Type != "Empty Piece")
-                                            {
-                                                isEmpty = false;
-                                                break;
-                                            }
-                                        }
-                                        if (isEmpty)
-                                        {
-                                            board[currIndex.Item1, 6].Image = board[currIndex.Item1, 6].ChessPiece.SpecialImageAfterClick;
-                                        }
-                                    }
-                                        break;
-                                default:
-                                    break;
-                            }
-                            for (int i = 1; i <= guard; i++)
-                            {
-                                int row = currIndex.Item1 + mod.Item1 * i;
-                                int col = currIndex.Item2 + mod.Item2 * i;
-                                if (row > 7 || row < 0 || col > 7 || col < 0)
-                                {
-                                    break;
-                                }
-                                else if (board[row, col].ChessPiece.Color == turnColor)
-                                {
-                                    break;
-                                }
-                                else if (board[row, col].ChessPiece.Type != "Empty Piece" && board[row, col].ChessPiece.Color != turnColor)
-                                {
-                                    if (currTile.ChessPiece.Type == "Pawn" && possibleMove.Item1 == Direction.Forward)
-                                    {
-                                        break;
-                                    } else if (board[row, col].ChessPiece.Type == "King")
-                                    {
-                                        kingAttacked = true;
-                                    }
-                                    board[row, col].Image = board[row, col].ChessPiece.ImageAfterClick;
-                                    if (kingAttacked)
-                                    {
-                                        piecesMovesKingAttacked.Add(board[row, col]);
-                                    }
-                                    break;
-                                } else
-                                {
-                                    if (currTile.ChessPiece.Type == "Pawn" && possibleMove.Item1 == Direction.Forward && possibleMove.Item2 == MovementType.Double && i == 2)
-                                    {
-                                        board[row, col].Image = board[row, col].ChessPiece.SpecialImageAfterClick;
-                                        break;
-                                    }
-                                    board[row, col].Image = board[row, col].ChessPiece.ImageAfterClick;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            switch (possibleMove.Item1)
-                            {
-                                case Direction.Forward:
-                                    try
-                                    {
-                                        if (board[currIndex.Item1 + 2, currIndex.Item2 + 1].ChessPiece.Color != turnColor)
-                                        {
-                                            board[currIndex.Item1 + 2, currIndex.Item2 + 1].Image = board[currIndex.Item1 + 2, currIndex.Item2 + 1].ChessPiece.ImageAfterClick;
-                                        }
-                                        if (kingAttacked)
-                                        {
-                                            piecesMovesKingAttacked.Add(board[currIndex.Item1 + 2, currIndex.Item2 + 1]);
-                                        }
-                                    } catch (IndexOutOfRangeException)
-                                    {
-                                    }
-                                    finally
-                                    {
-                                        try
-                                        {
-                                            if (board[currIndex.Item1 + 2, currIndex.Item2 - 1].ChessPiece.Color != turnColor)
-                                            {
-                                                board[currIndex.Item1 + 2, currIndex.Item2 - 1].Image = board[currIndex.Item1 + 2, currIndex.Item2 - 1].ChessPiece.ImageAfterClick;
-                                            }
-                                            if (kingAttacked)
-                                            {
-                                                piecesMovesKingAttacked.Add(board[currIndex.Item1 + 2, currIndex.Item2 - 1]);
-                                            }
-                                        }
-                                        catch (IndexOutOfRangeException)
-                                        {
-
-                                        }
-                                    }
-                                    break;
-                                case Direction.Backward:
-                                    try
-                                    {
-                                        if (board[currIndex.Item1 - 2, currIndex.Item2 + 1].ChessPiece.Color != turnColor)
-                                        {
-                                            board[currIndex.Item1 - 2, currIndex.Item2 + 1].Image = board[currIndex.Item1 - 2, currIndex.Item2 + 1].ChessPiece.ImageAfterClick;
-                                        }
-                                        if (kingAttacked)
-                                        {
-                                            piecesMovesKingAttacked.Add(board[currIndex.Item1 - 2, currIndex.Item2 + 1]);
-                                        }
-                                    }
-                                    catch (IndexOutOfRangeException)
-                                    {
-                                    }
-                                    finally
-                                    {
-                                        try
-                                        {
-                                            if (board[currIndex.Item1 - 2, currIndex.Item2 - 1].ChessPiece.Color != turnColor)
-                                            {
-                                                board[currIndex.Item1 - 2, currIndex.Item2 - 1].Image = board[currIndex.Item1 - 2, currIndex.Item2 - 1].ChessPiece.ImageAfterClick;
-                                            }
-                                            if (kingAttacked)
-                                            {
-                                                piecesMovesKingAttacked.Add(board[currIndex.Item1 - 2, currIndex.Item2 - 1]);
-                                            }
-                                        }
-                                        catch (IndexOutOfRangeException)
-                                        {
-
-                                        }
-                                    }
-                                    break;
-                                case Direction.Right:
-                                    try
-                                    {
-                                        if (board[currIndex.Item1 + 1, currIndex.Item2 + 2].ChessPiece.Color != turnColor)
-                                        {
-                                            board[currIndex.Item1 + 1, currIndex.Item2 + 2].Image = board[currIndex.Item1 + 1, currIndex.Item2 + 2].ChessPiece.ImageAfterClick;
-                                        }
-                                        if (kingAttacked)
-                                        {
-                                            piecesMovesKingAttacked.Add(board[currIndex.Item1 + 1, currIndex.Item2 + 2]);
-                                        }
-                                    }
-                                    catch (IndexOutOfRangeException)
-                                    {
-                                    }
-                                    finally
-                                    {
-                                        try
-                                        {
-                                            if (board[currIndex.Item1 - 1, currIndex.Item2 + 2].ChessPiece.Color != turnColor)
-                                            {
-                                                board[currIndex.Item1 - 1, currIndex.Item2 + 2].Image = board[currIndex.Item1 - 1, currIndex.Item2 + 2].ChessPiece.ImageAfterClick;
-                                            }
-                                            if (kingAttacked)
-                                            {
-                                                piecesMovesKingAttacked.Add(board[currIndex.Item1 - 1, currIndex.Item2 + 2]);
-                                            }
-                                        }
-                                        catch (IndexOutOfRangeException)
-                                        {
-
-                                        }
-                                    }
-                                    break;
-                                case Direction.Left:
-                                    try
-                                    {
-                                        if (board[currIndex.Item1 - 1, currIndex.Item2 - 2].ChessPiece.Color != turnColor)
-                                        {
-                                            board[currIndex.Item1 - 1, currIndex.Item2 - 2].Image = board[currIndex.Item1 - 1, currIndex.Item2 - 2].ChessPiece.ImageAfterClick;
-                                        }
-                                        if (kingAttacked)
-                                        {
-                                            piecesMovesKingAttacked.Add(board[currIndex.Item1 - 1, currIndex.Item2 - 2]);
-                                        }
-                                    }
-                                    catch (IndexOutOfRangeException)
-                                    {
-                                    }
-                                    finally
-                                    {
-                                        try
-                                        {
-                                            if (board[currIndex.Item1 + 1, currIndex.Item2 - 2].ChessPiece.Color != turnColor)
-                                            {
-                                                board[currIndex.Item1 + 1, currIndex.Item2 - 2].Image = board[currIndex.Item1 + 1, currIndex.Item2 - 2].ChessPiece.ImageAfterClick;
-                                            }
-                                            if (kingAttacked)
-                                            {
-                                                piecesMovesKingAttacked.Add(board[currIndex.Item1 + 1, currIndex.Item2 - 2]);
-                                            }
-                                        }
-                                        catch (IndexOutOfRangeException)
-                                        {
-
-                                        }
-                                    }
-                                    break;
-                                default:
-                                    break;
-                            }
-
-
-                        }
-                    }
+                    gameplay.ShowPossibleMoves(currTile, turnColor, currIndex, board, possibleMoves);
                 }
             }
+            // Handles when a player wants to see another chesspiece's possible moves 
             else if (isClicked && prevIndex.Item1 == currTile.Index.Item1 && prevIndex.Item2 == currTile.Index.Item2)
             {
                 for (int i = 0; i < 8; i++)
@@ -458,78 +175,38 @@ namespace Chess
                         } 
                     }
                 }
+
+                if (kingClicked)
+                {
+                    kingClicked = false;
+                }
+
                 isClicked = false;
             }
+            // Handles visualisation of moves
             else if (isClicked)
             {
                 isClicked = false;
-                var currentIndex = currTile.Index;
-                if (kingAttacked)
+                int row = currTile.Index.Item1;
+                int col = currTile.Index.Item2;
+                int prevRow = prevIndex.Item1;
+                int prevCol = prevIndex.Item2;
+
+                if (board[row, col].Image == board[row, col].ChessPiece.ImageAfterClick || board[row, col].Image == board[row, col].ChessPiece.SpecialImageAfterClick)
                 {
-                    foreach(var move in piecesMovesKingAttacked)
+                    if (board[prevRow, prevCol].ChessPiece.Type == "Pawn" || board[prevRow, prevCol].ChessPiece.Type == "King" || board[prevRow, prevCol].ChessPiece.Type == "Rook")
                     {
-                        if (currTile == move && board[prevIndex.Item1, prevIndex.Item2].ChessPiece.Type == "King")
-                        {
-                            MessageBox.Show("King is still attacked here.");
-                            isClicked = true;
-                            return;
-                        } 
-                    }
-                }
-                if (board[currTile.Index.Item1, currTile.Index.Item2].Image == board[currTile.Index.Item1, currTile.Index.Item2].ChessPiece.ImageAfterClick || 
-                    board[currTile.Index.Item1, currTile.Index.Item2].Image == board[currTile.Index.Item1, currTile.Index.Item2].ChessPiece.SpecialImageAfterClick)
-                {
-                    if (board[prevIndex.Item1, prevIndex.Item2].ChessPiece.Type == "Pawn" || board[prevIndex.Item1, prevIndex.Item2].ChessPiece.Type == "King" || board[prevIndex.Item1, prevIndex.Item2].ChessPiece.Type == "Rook")
-                    {
-                        board[prevIndex.Item1, prevIndex.Item2].ChessPiece.hasMoved = true;
-                        board[prevIndex.Item1, prevIndex.Item2].ChessPiece.FillPossibleMoves();
-                    }
-                    if (kingClicked && board[currTile.Index.Item1, currTile.Index.Item2].Image == board[currTile.Index.Item1, currTile.Index.Item2].ChessPiece.SpecialImageAfterClick && currentIndex.Item2 == 2)
-                    {
-                        var temp1 = board[currentIndex.Item1, 3];
-                        board[currentIndex.Item1, 3] = board[currentIndex.Item1, 0];
-                        board[currentIndex.Item1, 3].Location = new Point(3 * 90, currentIndex.Item1 * 90);
-                        board[currentIndex.Item1, 3].Image = board[currentIndex.Item1, 3].ChessPiece.DefaultImage;
-                        board[currentIndex.Item1, 3].BringToFront();
-                        board[currentIndex.Item1, 0] = null;
-                        board[currentIndex.Item1, 0] = temp1;
-                        board[currentIndex.Item1, 0].ChessPiece = new EmptyPiece(Colour.Colorless, "Empty Piece");
-                        board[currentIndex.Item1, 0].Index = Tuple.Create(currentIndex.Item1, 0);
-                        board[currentIndex.Item1, 0].Location = new Point(0, currentIndex.Item1 * 90);
-                        board[currentIndex.Item1, 0].Image = board[currentIndex.Item1, 0].ChessPiece.DefaultImage;
-                        board[currentIndex.Item1, 0].BringToFront();
-                    } else if (kingClicked && board[currTile.Index.Item1, currTile.Index.Item2].Image == board[currTile.Index.Item1, currTile.Index.Item2].ChessPiece.SpecialImageAfterClick && currentIndex.Item2 == 6)
-                    {
-                        var temp1 = board[currentIndex.Item1, 5];
-                        board[currentIndex.Item1, 5] = board[currentIndex.Item1, 7];
-                        board[currentIndex.Item1, 5].Location = new Point(5 * 90, currentIndex.Item1 * 90);
-                        board[currentIndex.Item1, 5].Image = board[currentIndex.Item1, 5].ChessPiece.DefaultImage;
-                        board[currentIndex.Item1, 5].BringToFront();
-                        board[currentIndex.Item1, 7] = null;
-                        board[currentIndex.Item1, 7] = temp1;
-                        board[currentIndex.Item1, 7].ChessPiece = new EmptyPiece(Colour.Colorless, "Empty Piece");
-                        board[currentIndex.Item1, 7].Index = Tuple.Create(currentIndex.Item1, 7);
-                        board[currentIndex.Item1, 7].Location = new Point(7 * 90, currentIndex.Item1 * 90);
-                        board[currentIndex.Item1, 7].Image = board[currentIndex.Item1, 7].ChessPiece.DefaultImage;
-                        board[currentIndex.Item1, 7].BringToFront();
+                        board[prevRow, prevCol].ChessPiece.hasMoved = true;
+                        board[prevRow, prevCol].ChessPiece.FillPossibleMoves();
                     }
 
-                    var temp = board[currTile.Index.Item1, currTile.Index.Item2];
-                    board[currTile.Index.Item1, currTile.Index.Item2] = null;
-                    board[currTile.Index.Item1, currTile.Index.Item2] = board[prevIndex.Item1, prevIndex.Item2];
-                    board[currTile.Index.Item1, currTile.Index.Item2].Index = currentIndex;
-                    board[currTile.Index.Item1, currTile.Index.Item2].Location = new Point(currentIndex.Item2 * 90, currentIndex.Item1 * 90);
-                    board[currTile.Index.Item1, currTile.Index.Item2].Image = board[currentIndex.Item1, currentIndex.Item2].ChessPiece.DefaultImage;
-                    board[currTile.Index.Item1, currTile.Index.Item2].BringToFront();
-                    board[prevIndex.Item1, prevIndex.Item2] = null;
-                    board[prevIndex.Item1, prevIndex.Item2] = temp;
-                    board[prevIndex.Item1, prevIndex.Item2].ChessPiece = new EmptyPiece(Colour.Colorless, "Empty Piece");
-                    board[prevIndex.Item1, prevIndex.Item2].Index = prevIndex;
-                    board[prevIndex.Item1, prevIndex.Item2].Location = new Point(prevIndex.Item2 * 90, prevIndex.Item1 * 90);
-                    board[prevIndex.Item1, prevIndex.Item2].Image = board[currentIndex.Item1, currentIndex.Item2].ChessPiece.DefaultImage;
-                    board[prevIndex.Item1, prevIndex.Item2].BringToFront();
+                    if (board[row, col].Image == board[row, col].ChessPiece.SpecialImageAfterClick && kingClicked)
+                    {
+						gameplay.Castling(board, currTile, row, col);
+                    }
 
-
+                    kingClicked = false;
+                    gameplay.Move(board, row, col, prevRow, prevCol);
                     Invalidate();
                     for (int i = 0; i < 8; i++)
                     {
@@ -546,13 +223,7 @@ namespace Chess
                     return;
                 }
 
-                if (turnColor == Colour.White)
-                {
-                    turnColor = Colour.Black;
-                } else 
-                {
-                    turnColor = Colour.White;
-                }
+				turnColor = gameplay.ChangeColor(turnColor);
             }
         }
 
