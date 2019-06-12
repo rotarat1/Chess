@@ -9,8 +9,11 @@ namespace Chess
 {
 	class Pawn : ChessPiece
 	{
-		public Pawn(Colour color, string type) : base(color, type)
+		public bool hasDoubleMoved;
+		public Pawn(Colour color) : base(color)
 		{
+			hasDoubleMoved = false;
+			Type = PieceType.Pawn;
             hasMoved = false;
             if (color == Colour.Black)
             {

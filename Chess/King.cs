@@ -9,8 +9,9 @@ namespace Chess
 {
 	public class King : ChessPiece
 	{
-		public King(Colour color, string type) : base(color, type)
+		public King(Colour color) : base(color)
 		{
+			Type = PieceType.King;
             hasMoved = false;
 
             if (color == Colour.Black)

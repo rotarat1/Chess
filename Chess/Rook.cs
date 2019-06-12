@@ -9,8 +9,9 @@ namespace Chess
 {
 	class Rook : ChessPiece
 	{
-		public Rook(Colour color, string type) : base(color, type)
+		public Rook(Colour color) : base(color)
 		{
+			Type = PieceType.Rook;
             hasMoved = false;
             if (color == Colour.Black)
             {
@@ -26,6 +27,7 @@ namespace Chess
 
 		public override void FillPossibleMoves()
 		{
+			possibleMoves.Clear();
             possibleMoves.Add(Tuple.Create(Direction.Forward, MovementType.Multiple));
 			possibleMoves.Add(Tuple.Create(Direction.Backward, MovementType.Multiple));
 			possibleMoves.Add(Tuple.Create(Direction.Left, MovementType.Multiple));

@@ -23,7 +23,5 @@ namespace Chess
             BackColor = Color.Transparent;
             SizeMode = PictureBoxSizeMode.CenterImage;
         }
-        
-
     }
 }

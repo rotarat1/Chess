@@ -9,8 +9,9 @@ namespace Chess
 {
 	public class Queen : ChessPiece
 	{
-		public Queen(Colour color, string type) : base(color, type)
+		public Queen(Colour color) : base(color)
 		{
+			Type = PieceType.Queen;
             if (color == Colour.Black)
             {
                 ImageAfterClick = Properties.Resources.b_q_attack;
@@ -25,6 +26,7 @@ namespace Chess
 
 		public override void FillPossibleMoves()
 		{
+			possibleMoves.Clear();
 			possibleMoves.Add(Tuple.Create(Direction.Forward, MovementType.Multiple));
 			possibleMoves.Add(Tuple.Create(Direction.Backward, MovementType.Multiple));
 			possibleMoves.Add(Tuple.Create(Direction.ForwardLeft, MovementType.Multiple));

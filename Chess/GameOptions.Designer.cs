@@ -30,33 +30,34 @@ namespace Chess
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.singlePlayer = new System.Windows.Forms.Button();
 			this.multiPlayer = new System.Windows.Forms.Button();
+			this.singlePlayer = new System.Windows.Forms.Button();
 			this.SuspendLayout();
+
+			// 
+			// multiPlayer
+			// 
+			this.multiPlayer.Font = new System.Drawing.Font("Sitka Subheading", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.multiPlayer.ForeColor = System.Drawing.SystemColors.Highlight;
+			this.multiPlayer.Location = new System.Drawing.Point(12, 32);
+			this.multiPlayer.Name = "multiPlayer";
+			this.multiPlayer.Size = new System.Drawing.Size(150, 35);
+			this.multiPlayer.TabIndex = 1;
+			this.multiPlayer.Text = "Multiplayer";
+			this.multiPlayer.UseVisualStyleBackColor = true;
+			this.multiPlayer.Click += new System.EventHandler(this.multiPlayer_Click);
 			// 
 			// singlePlayer
 			// 
 			this.singlePlayer.Font = new System.Drawing.Font("Sitka Subheading", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.singlePlayer.ForeColor = System.Drawing.SystemColors.Highlight;
-			this.singlePlayer.Location = new System.Drawing.Point(12, 32);
+			this.singlePlayer.Location = new System.Drawing.Point(184, 32);
 			this.singlePlayer.Name = "singlePlayer";
 			this.singlePlayer.Size = new System.Drawing.Size(150, 35);
 			this.singlePlayer.TabIndex = 0;
 			this.singlePlayer.Text = "Single Player";
 			this.singlePlayer.UseVisualStyleBackColor = true;
 			this.singlePlayer.Click += new System.EventHandler(this.singlePlayer_Click);
-			// 
-			// multiPlayer
-			// 
-			this.multiPlayer.Font = new System.Drawing.Font("Sitka Subheading", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.multiPlayer.ForeColor = System.Drawing.SystemColors.Highlight;
-			this.multiPlayer.Location = new System.Drawing.Point(184, 32);
-			this.multiPlayer.Name = "multiPlayer";
-			this.multiPlayer.Size = new System.Drawing.Size(150, 35);
-			this.multiPlayer.TabIndex = 1;
-			this.multiPlayer.Text = "Multiplayer";
-			this.multiPlayer.UseVisualStyleBackColor = true;
-			this.singlePlayer.Click += new System.EventHandler(this.multiPlayer_Click);
 			// 
 			// GameOptions
 			// 

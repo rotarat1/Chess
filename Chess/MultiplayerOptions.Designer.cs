@@ -138,11 +138,13 @@ namespace Chess
 
 		private void Player2NameInfoButton_Clicked(object sender, EventArgs e)
 		{
+			player2Name = label1.Text;
 			player1Assigned = true;
 		}
 
 		private void Player1NameInfoButton_Clicked(object sender, EventArgs e)
 		{
+			player1Name = label1.Text;
 			player2Assigned = true;
 		}
 

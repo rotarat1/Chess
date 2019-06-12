@@ -9,8 +9,9 @@ namespace Chess
 {
 	class Bishop : ChessPiece
 	{
-		public Bishop(Colour color, string type) : base(color, type)
+		public Bishop(Colour color) : base(color)
 		{
+			Type = PieceType.Bishop;
             if (color == Colour.Black)
             {
                 ImageAfterClick = Properties.Resources.b_b_attack;
@@ -25,6 +26,7 @@ namespace Chess
 
 		public override void FillPossibleMoves()
 		{
+			possibleMoves.Clear();
 			possibleMoves.Add(Tuple.Create(Direction.ForwardLeft, MovementType.Multiple));
 			possibleMoves.Add(Tuple.Create(Direction.ForwardRight, MovementType.Multiple));
 			possibleMoves.Add(Tuple.Create(Direction.BackwardRight, MovementType.Multiple));

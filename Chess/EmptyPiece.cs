@@ -8,8 +8,9 @@ namespace Chess
 {
     class EmptyPiece : ChessPiece
     {
-        public EmptyPiece(Colour color, string type) : base(color, type)
+        public EmptyPiece(Colour color) : base(color)
         {
+			Type = PieceType.EmptyPiece;
             ImageAfterClick = Properties.Resources.move_dot;
             SpecialImageAfterClick = Properties.Resources.special_move_dot;
         }

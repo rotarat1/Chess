@@ -13,9 +13,13 @@ namespace Chess
 	public partial class MultiplayerOptions : Form
 	{
 		public bool player1Assigned;
+		public string player1Name;
 		public bool player2Assigned;
+		public string player2Name;
 		public MultiplayerOptions()
 		{
+			player1Name = "";
+			player2Name = "";
 			player1Assigned = false;
 			player2Assigned = false;
 			InitializeComponent();
